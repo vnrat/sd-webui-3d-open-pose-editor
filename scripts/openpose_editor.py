@@ -208,8 +208,10 @@ def on_ui_tabs():
             with gr.Column():
                 gr.HTML(
                     """
-                    <div id="threedopenpose_background"></div>
-                    <canvas id="threedopenpose_canvas" width="512" height="512"></canvas>
+                    <div style="position:relative;z-index:0">
+                        <div id="threedopenpose_background"></div>
+                        <canvas id="threedopenpose_canvas" width="512" height="512"></canvas>
+                    </div>
                     """
                 )
 
