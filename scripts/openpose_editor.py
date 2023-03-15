@@ -1,5 +1,4 @@
 import gradio as gr
-import modules.scripts as scripts
 from modules import script_callbacks
 from modules.shared import opts
 
