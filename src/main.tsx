@@ -156,13 +156,13 @@ const downloadImage = (url: string, name: string) => {
 
 const sendToControlNet = (
     element: Element,
-    pose_image: string,
+    pose_image: string | null,
     pose_target: string,
-    depth_image: string,
+    depth_image: string | null,
     depth_target: string,
-    normal_image: string,
+    normal_image: string | null,
     normal_target: string,
-    canny_image: string,
+    canny_image: string | null,
     canny_target: string
 ) => {
     const imageElems = element.querySelectorAll('div[data-testid="image"]')
@@ -370,13 +370,13 @@ window.threedopenpose = {
             .click()
     },
     sendTxt2img: (
-        pose_image: string,
+        pose_image: string | null,
         pose_target: string,
-        depth_image: string,
+        depth_image: string | null,
         depth_target: string,
-        normal_image: string,
+        normal_image: string | null,
         normal_target: string,
-        canny_image: string,
+        canny_image: string | null,
         canny_target: string
     ) => {
         const cnElem = gradioApp().querySelector(
