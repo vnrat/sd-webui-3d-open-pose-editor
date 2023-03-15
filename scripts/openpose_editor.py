@@ -166,38 +166,46 @@ def on_ui_tabs():
                             pose_image = gr.Image(
                                 label="Pose", elem_id="threedopenpose_pose_image"
                             )
-                            pose_target = gr.Dropdown(
-                                label="ControlNet number",
-                                choices=cn_dropdown_list,
-                                value="0",
-                            )
+                            with gr.Row():
+                                pose_target = gr.Dropdown(
+                                    label="ControlNet number",
+                                    choices=cn_dropdown_list,
+                                    value="0",
+                                )
+                                pose_download = gr.Button(value="Download")
                         with gr.Column(variant="panel"):
                             depth_image = gr.Image(
                                 label="Depth", elem_id="threedopenpose_depth_image"
                             )
-                            depth_target = gr.Dropdown(
-                                label="ControlNet number",
-                                choices=cn_dropdown_list,
-                                value="1" if cn_max >= 2 else "-",
-                            )
+                            with gr.Row():
+                                depth_target = gr.Dropdown(
+                                    label="ControlNet number",
+                                    choices=cn_dropdown_list,
+                                    value="1" if cn_max >= 2 else "-",
+                                )
+                                depth_download = gr.Button(value="Download")
                         with gr.Column(variant="panel"):
                             normal_image = gr.Image(
                                 label="Normal", elem_id="threedopenpose_normal_image"
                             )
-                            normal_target = gr.Dropdown(
-                                label="ControlNet number",
-                                choices=cn_dropdown_list,
-                                value="2" if cn_max >= 3 else "-",
-                            )
+                            with gr.Row():
+                                normal_target = gr.Dropdown(
+                                    label="ControlNet number",
+                                    choices=cn_dropdown_list,
+                                    value="2" if cn_max >= 3 else "-",
+                                )
+                                normal_download = gr.Button(value="Download")
                         with gr.Column(variant="panel"):
                             canny_image = gr.Image(
                                 label="Canny", elem_id="threedopenpose_canny_image"
                             )
-                            canny_target = gr.Dropdown(
-                                label="ControlNet number",
-                                choices=cn_dropdown_list,
-                                value="3" if cn_max >= 4 else "-",
-                            )
+                            with gr.Row():
+                                canny_target = gr.Dropdown(
+                                    label="ControlNet number",
+                                    choices=cn_dropdown_list,
+                                    value="3" if cn_max >= 4 else "-",
+                                )
+                                canny_download = gr.Button(value="Download")
             with gr.Column():
                 gr.HTML(
                     """
@@ -318,6 +326,18 @@ def on_ui_tabs():
             ],
             None,
             _js="window.threedopenpose.sendImg2img",
+        )
+        pose_download.click(
+            None, pose_image, None, _js="window.threedopenpose.downloadPoseImage"
+        )
+        depth_download.click(
+            None, depth_image, None, _js="window.threedopenpose.downloadDepthImage"
+        )
+        normal_download.click(
+            None, normal_image, None, _js="window.threedopenpose.downloadNormalImage"
+        )
+        canny_download.click(
+            None, canny_image, None, _js="window.threedopenpose.downloadCannyImage"
         )
 
     return [(blocks, "3D Openpose", "threedopenpose")]

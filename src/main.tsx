@@ -146,6 +146,14 @@ const resize = () => {
     options.Height = canvasSize[1]
 }
 
+const downloadImage = (url: string, name: string) => {
+    const element = document.createElement('a')
+    element.href = url
+    element.download = name
+    element.target = '_blank'
+    element.click()
+}
+
 const sendToControlNet = (
     element: Element,
     pose_image: string,
@@ -412,6 +420,30 @@ window.threedopenpose = {
             canny_target
         )
         switch_to_img2img()
+    },
+    downloadPoseImage: (image: string | null) => {
+        if (!image) {
+            return
+        }
+        downloadImage(image, 'pose.png')
+    },
+    downloadDepthImage: (image: string | null) => {
+        if (!image) {
+            return
+        }
+        downloadImage(image, 'depth.png')
+    },
+    downloadNormalImage: (image: string | null) => {
+        if (!image) {
+            return
+        }
+        downloadImage(image, 'normal.png')
+    },
+    downloadCannyImage: (image: string | null) => {
+        if (!image) {
+            return
+        }
+        downloadImage(image, 'canny.png')
     },
 }
 
