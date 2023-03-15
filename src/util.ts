@@ -1,6 +1,5 @@
 import dayjs from 'dayjs'
 import Swal from 'sweetalert2'
-import i18n from './i18n'
 
 export function download(href: string, title: string) {
     const a = document.createElement('a')
@@ -22,7 +21,6 @@ export function getCurrentTime(format = 'YYYY_MM_DD_HH_mm_ss') {
 
 export async function uploadJson() {
     const { value: file } = await Swal.fire({
-        title: i18n.t('Select a scene file')!,
         input: 'file',
         inputAttributes: {
             accept: 'application/json',
@@ -48,7 +46,6 @@ export async function uploadJson() {
 
 export async function uploadImage() {
     const { value: file } = await Swal.fire({
-        title: i18n.t('Select an image')!,
         input: 'file',
         inputAttributes: {
             accept: 'image/*',

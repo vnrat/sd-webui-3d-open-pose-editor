@@ -18,7 +18,6 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 //     IKS,
 // } from 'three/examples/jsm/animate/CCDIKSolver'
 
-import Stats from 'three/examples/jsm/libs/stats.module'
 import {
     BodyControlor,
     CloneBody,
@@ -44,7 +43,6 @@ import { LuminosityShader } from 'three/examples/jsm/shaders/LuminosityShader.js
 import { SobelOperatorShader } from 'three/examples/jsm/shaders/SobelOperatorShader.js'
 import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils'
 import Swal from 'sweetalert2'
-import i18n from './i18n'
 import { FindObjectItem } from './three-utils'
 
 interface BodyData {
@@ -87,13 +85,14 @@ export class BodyEditor {
     alight: THREE.AmbientLight
     raycaster = new THREE.Raycaster()
     IsClick = false
-    stats: Stats
 
     // ikSolver?: CCDIKSolver
     composer?: EffectComposer
     effectSobel?: ShaderPass
     enableComposer = false
     enablePreview = true
+
+    paused = false
 
     constructor(canvas: HTMLCanvasElement) {
         this.renderer = new THREE.WebGLRenderer({
@@ -190,8 +189,6 @@ export class BodyEditor {
         // // Setup post-processing step
         // this.setupPost();
 
-        this.stats = Stats()
-        document.body.appendChild(this.stats.dom)
         this.animate()
         this.handleResize()
         this.AutoSaveScene()
@@ -278,11 +275,22 @@ export class BodyEditor {
         return this.outputRenderer.domElement.toDataURL('image/png')
     }
     animate() {
+        if (this.paused) {
+            return
+        }
         requestAnimationFrame(this.animate.bind(this))
         this.handleResize()
         this.render()
         if (this.enablePreview) this.renderPreview()
-        this.stats.update()
+    }
+
+    pause() {
+        this.paused = true
+    }
+
+    resume() {
+        this.paused = false
+        this.animate()
     }
 
     getAncestors(o: Object3D) {
@@ -322,15 +330,12 @@ export class BodyEditor {
     }
 
     onMouseDown(event: MouseEvent) {
+        const x = event.offsetX - this.renderer.domElement.offsetLeft
+        const y = event.offsetY - this.renderer.domElement.offsetTop
         this.raycaster.setFromCamera(
             {
-                x:
-                    (event.clientX / this.renderer.domElement.clientWidth) * 2 -
-                    1,
-                y:
-                    -(event.clientY / this.renderer.domElement.clientHeight) *
-                        2 +
-                    1,
+                x: (x / this.renderer.domElement.clientWidth) * 2 - 1,
+                y: -(y / this.renderer.domElement.clientHeight) * 2 + 1,
             },
             this.camera
         )
@@ -826,6 +831,7 @@ export class BodyEditor {
         effectSobel.uniforms['resolution'].value.y =
             this.Height * window.devicePixelRatio
         this.composer.addPass(effectSobel)
+        this.effectSobel = effectSobel
     }
 
     changeComposerResoultion(width: number, height: number) {
@@ -845,7 +851,6 @@ export class BodyEditor {
                 Swal.close()
             } else if (Swal.isVisible() == false) {
                 Swal.fire({
-                    title: i18n.t('Downloading Hand Model') ?? '',
                     didOpen: () => {
                         Swal.showLoading()
                     },
@@ -858,7 +863,6 @@ export class BodyEditor {
                 Swal.close()
             } else if (Swal.isVisible() == false) {
                 Swal.fire({
-                    title: i18n.t('Downloading Foot Model') ?? '',
                     didOpen: () => {
                         Swal.showLoading()
                     },
@@ -1024,13 +1028,9 @@ export class BodyEditor {
         } catch (error: any) {
             Swal.fire({
                 icon: 'error',
-                title: i18n.t('Oops...')!,
-                text:
-                    i18n.t('Something went wrong!')! + '\n' + error?.stack ??
-                    error,
-                footer: `<a href="https://github.com/ZhUyU1997/open-pose-editor/issues">${i18n.t(
-                    'If the problem persists, please click here to ask a question.'
-                )}</a>`,
+                title: 'Oops...',
+                text: 'Something went wrong!' + '\n' + error?.stack ?? error,
+                footer: '<a href="https://github.com/ZhUyU1997/open-pose-editor/issues">If the problem persists, please click here to ask a question.</a>',
             })
             console.error(error)
         }

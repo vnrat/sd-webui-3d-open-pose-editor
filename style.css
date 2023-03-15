@@ -1,0 +1,20 @@
+#threedopenpose_canvas {
+    display: block;
+    width: 90%;
+    aspect-ratio: 1;
+}
+
+#threedopenpose_background {
+    width: 90%;
+    aspect-ratio: 1;
+    position: absolute;
+    z-index: -1;
+    background-color: rgb(214, 214, 214);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.threedopenpose_hidden {
+    display: none !important;
+}

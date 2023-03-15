@@ -1,0 +1,25 @@
+{
+	"name": "Debian",
+	"image": "mcr.microsoft.com/devcontainers/base:bullseye",
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "18"
+		},
+		"ghcr.io/devcontainers/features/python:1": {
+			"version": "3.10"
+		}
+	},
+	"mounts": [
+		{
+			"type": "volume",
+			"source": "sd-webui-3d-open-pose-editor-venv",
+			"target": "${containerWorkspaceFolder}/.venv"
+		},
+		{
+			"type": "volume",
+			"source": "sd-webui-3d-open-pose-editor-nodemodules",
+			"target": "${containerWorkspaceFolder}/node_modules"
+		}
+	],
+	"postCreateCommand": "bash .devcontainer/init.sh"
+}
