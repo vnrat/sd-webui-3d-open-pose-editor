@@ -48,14 +48,20 @@ def on_ui_tabs():
                     with gr.Accordion(label="Camera Parameters", open=False):
                         with gr.Row(variant="compact"):
                             camera_near = gr.Slider(
-                                label="Camera Near", minimum=0, maximum=1000, value=0.1
+                                label="Camera Near",
+                                minimum=0.1,
+                                maximum=1000,
+                                value=0.1,
                             )
                             camera_far = gr.Slider(
-                                label="Camera Far", minimum=0, maximum=1000, value=1000
+                                label="Camera Far",
+                                minimum=0.1,
+                                maximum=1000,
+                                value=1000,
                             )
                             camera_focal_length = gr.Slider(
                                 label="Camera Focal Length",
-                                minimum=0,
+                                minimum=0.1,
                                 maximum=100,
                                 value=16,
                             )
@@ -67,82 +73,82 @@ def on_ui_tabs():
                             head_size = gr.Slider(
                                 label="Head Size",
                                 elem_id="threedopenpose_head_size",
-                                minimum=0,
+                                minimum=0.1,
                                 maximum=100,
                             )
                             nose_to_neck = gr.Slider(
                                 label="Nose To Neck",
                                 elem_id="threedopenpose_nose_to_neck",
-                                minimum=0,
+                                minimum=0.1,
                                 maximum=100,
                             )
                             shoulder_width = gr.Slider(
                                 label="Shoulder Width",
                                 elem_id="threedopenpose_shoulder_width",
-                                minimum=0,
+                                minimum=0.1,
                                 maximum=100,
                             )
                             shoulder_to_hip = gr.Slider(
                                 label="Shoulder To Hip",
                                 elem_id="threedopenpose_shoulder_to_hip",
-                                minimum=0,
+                                minimum=0.1,
                                 maximum=100,
                             )
                         with gr.Row(variant="compact"):
                             arm_length = gr.Slider(
                                 label="Arm Length",
                                 elem_id="threedopenpose_arm_length",
-                                minimum=0,
+                                minimum=0.1,
                                 maximum=100,
                             )
                             forearm = gr.Slider(
                                 label="Forearm",
                                 elem_id="threedopenpose_forearm",
-                                minimum=0,
+                                minimum=0.1,
                                 maximum=100,
                             )
                             upper_arm = gr.Slider(
                                 label="Upper Arm",
                                 elem_id="threedopenpose_upper_arm",
-                                minimum=0,
+                                minimum=0.1,
                                 maximum=100,
                             )
                             hand_size = gr.Slider(
                                 label="Hand Size",
                                 elem_id="threedopenpose_hand_size",
-                                minimum=0,
+                                minimum=0.1,
                                 maximum=10,
                             )
                         with gr.Row(variant="compact"):
                             hips = gr.Slider(
                                 label="Hips",
                                 elem_id="threedopenpose_hips",
-                                minimum=0,
+                                minimum=0.1,
                                 maximum=100,
                             )
                             leg_length = gr.Slider(
                                 label="Leg Length",
                                 elem_id="threedopenpose_leg_length",
-                                minimum=0,
+                                minimum=0.1,
                                 maximum=200,
                             )
                             thigh = gr.Slider(
                                 label="Thigh",
                                 elem_id="threedopenpose_thigh",
-                                minimum=0,
+                                minimum=0.1,
                                 maximum=100,
                             )
                             lower_leg = gr.Slider(
                                 label="Lower Leg",
                                 elem_id="threedopenpose_lower_leg",
-                                minimum=0,
+                                minimum=0.1,
                                 maximum=100,
                             )
                         with gr.Row(variant="compact"):
                             foot_size = gr.Slider(
                                 label="Foot Size",
                                 elem_id="threedopenpose_foot_size",
-                                minimum=0,
+                                minimum=0.1,
                                 maximum=10,
                             )
                     gr.Markdown(
