@@ -323,6 +323,12 @@ window.threedopenpose = {
         }
         editor.RestoreLastSavedScene()
     },
+    randomPose: () => {
+        if (!editor) {
+            return
+        }
+        editor.SetRandomPose()
+    },
     copyBodyZ: () => {
         if (!editor) {
             return

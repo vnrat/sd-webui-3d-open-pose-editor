@@ -28,6 +28,8 @@ def on_ui_tabs():
                         )
                     with gr.Row():
                         set_background = gr.Button(value="Add Background image")
+                        random_pose = gr.Button(value="Set Random Pose")
+                    with gr.Row():
                         save_scene = gr.Button(value="Save Scene")
                         load_scene = gr.Button(value="Load Scene")
                         restore_last_saved_scene = gr.Button(value="Restore Last Scene")
@@ -279,6 +281,7 @@ def on_ui_tabs():
         restore_last_saved_scene.click(
             None, None, None, _js="window.threedopenpose.restoreLastSavedScene"
         )
+        random_pose.click(None, None, None, _js="window.threedopenpose.randomPose")
 
         copy_body_z.click(None, None, None, _js="window.threedopenpose.copyBodyZ")
         copy_body_x.click(None, None, None, _js="window.threedopenpose.copyBodyX")
