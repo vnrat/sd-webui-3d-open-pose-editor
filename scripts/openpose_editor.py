@@ -46,25 +46,32 @@ def on_ui_tabs():
                         )
                         only_hand = gr.Checkbox(label="Only Hand")
                         enable_preview = gr.Checkbox(label="Show Preview", value=True)
-                    with gr.Accordion(label="Camera Parameters", open=False):
+                    with gr.Accordion(
+                        label="Camera Parameters",
+                        elem_id="threedopenpose_camera_params",
+                        open=False,
+                    ):
                         with gr.Row(variant="compact"):
                             camera_near = gr.Slider(
                                 label="Camera Near",
+                                elem_id="threedopenpose_camera_near",
                                 minimum=0.1,
                                 maximum=1000,
-                                value=0.1,
+                                step=0.1,
                             )
                             camera_far = gr.Slider(
                                 label="Camera Far",
+                                elem_id="threedopenpose_camera_far",
                                 minimum=0.1,
                                 maximum=1000,
-                                value=1000,
+                                step=0.1,
                             )
                             camera_focal_length = gr.Slider(
                                 label="Camera Focal Length",
+                                elem_id="threedopenpose_camera_focal_length",
                                 minimum=0.1,
                                 maximum=100,
-                                value=16,
+                                step=0.1,
                             )
                     with gr.Accordion(
                         label="Body Parameters",
@@ -76,24 +83,28 @@ def on_ui_tabs():
                                 elem_id="threedopenpose_head_size",
                                 minimum=0.1,
                                 maximum=100,
+                                step=0.1,
                             )
                             nose_to_neck = gr.Slider(
                                 label="Nose To Neck",
                                 elem_id="threedopenpose_nose_to_neck",
                                 minimum=0.1,
                                 maximum=100,
+                                step=0.1,
                             )
                             shoulder_width = gr.Slider(
                                 label="Shoulder Width",
                                 elem_id="threedopenpose_shoulder_width",
                                 minimum=0.1,
                                 maximum=100,
+                                step=0.1,
                             )
                             shoulder_to_hip = gr.Slider(
                                 label="Shoulder To Hip",
                                 elem_id="threedopenpose_shoulder_to_hip",
                                 minimum=0.1,
                                 maximum=100,
+                                step=0.1,
                             )
                         with gr.Row(variant="compact"):
                             arm_length = gr.Slider(
@@ -101,24 +112,28 @@ def on_ui_tabs():
                                 elem_id="threedopenpose_arm_length",
                                 minimum=0.1,
                                 maximum=100,
+                                step=0.1,
                             )
                             forearm = gr.Slider(
                                 label="Forearm",
                                 elem_id="threedopenpose_forearm",
                                 minimum=0.1,
                                 maximum=100,
+                                step=0.1,
                             )
                             upper_arm = gr.Slider(
                                 label="Upper Arm",
                                 elem_id="threedopenpose_upper_arm",
                                 minimum=0.1,
                                 maximum=100,
+                                step=0.1,
                             )
                             hand_size = gr.Slider(
                                 label="Hand Size",
                                 elem_id="threedopenpose_hand_size",
                                 minimum=0.1,
                                 maximum=10,
+                                step=0.1,
                             )
                         with gr.Row(variant="compact"):
                             hips = gr.Slider(
@@ -126,24 +141,28 @@ def on_ui_tabs():
                                 elem_id="threedopenpose_hips",
                                 minimum=0.1,
                                 maximum=100,
+                                step=0.1,
                             )
                             leg_length = gr.Slider(
                                 label="Leg Length",
                                 elem_id="threedopenpose_leg_length",
                                 minimum=0.1,
                                 maximum=200,
+                                step=0.1,
                             )
                             thigh = gr.Slider(
                                 label="Thigh",
                                 elem_id="threedopenpose_thigh",
                                 minimum=0.1,
                                 maximum=100,
+                                step=0.1,
                             )
                             lower_leg = gr.Slider(
                                 label="Lower Leg",
                                 elem_id="threedopenpose_lower_leg",
                                 minimum=0.1,
                                 maximum=100,
+                                step=0.1,
                             )
                         with gr.Row(variant="compact"):
                             foot_size = gr.Slider(
@@ -151,6 +170,7 @@ def on_ui_tabs():
                                 elem_id="threedopenpose_foot_size",
                                 minimum=0.1,
                                 maximum=10,
+                                step=0.1,
                             )
                     gr.Markdown(
                         "Original: [Online 3D Openpose Editor](https://zhuyu1997.github.io/open-pose-editor/)"

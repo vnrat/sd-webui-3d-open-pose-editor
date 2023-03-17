@@ -463,6 +463,21 @@ onUiTabChange(() => {
     }
     if (isTabActive()) {
         editor.resume()
+        const cameraElem = gradioApp().querySelector<HTMLElement>(
+            '#threedopenpose_camera_params'
+        )!
+        updateGradioSlider(
+            cameraElem.querySelector('#threedopenpose_camera_near')!,
+            editor.CameraNear
+        )
+        updateGradioSlider(
+            cameraElem.querySelector('#threedopenpose_camera_far')!,
+            editor.CameraFar
+        )
+        updateGradioSlider(
+            cameraElem.querySelector('#threedopenpose_camera_focal_length')!,
+            editor.CameraFocalLength
+        )
     } else {
         editor.pause()
     }
