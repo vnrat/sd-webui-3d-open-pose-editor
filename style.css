@@ -18,3 +18,8 @@
 .threedopenpose_hidden {
     display: none !important;
 }
+
+/* Workaround for ashen-sensored/stable-diffusion-webui-two-shot */
+#threedopenpose_right_column .output-html {
+    display: block
+}

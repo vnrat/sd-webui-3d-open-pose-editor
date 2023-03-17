@@ -227,7 +227,7 @@ def on_ui_tabs():
                                     value="3" if cn_max >= 4 else "-",
                                 )
                                 canny_download = gr.Button(value="Download")
-            with gr.Column():
+            with gr.Column(elem_id="threedopenpose_right_column"):
                 gr.HTML(
                     """
                     <div style="position:relative;z-index:0">
