@@ -8,7 +8,10 @@ def on_ui_tabs():
         with gr.Row():
             with gr.Column(elem_id="threedopenpose_left_column"):
                 with gr.Tab("Edit Openpose"):
-                    make_images = gr.Button(value="Make Images", variant="primary")
+                    make_images = gr.Button(
+                        value="Generate Skeleton/Depth/Normal/Canny Map",
+                        variant="primary",
+                    )
                     with gr.Row():
                         width = gr.Slider(
                             label="Width",
