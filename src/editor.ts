@@ -1,22 +1,12 @@
 import * as THREE from 'three'
 import {
-    Bone,
     MeshDepthMaterial,
     MeshNormalMaterial,
     MeshPhongMaterial,
     Object3D,
-    Skeleton,
-    SkinnedMesh,
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
-
-// @ts-ignore
-// import {
-//     CCDIKHelper,
-//     CCDIKSolver,
-//     IKS,
-// } from 'three/examples/jsm/animate/CCDIKSolver'
 
 import {
     BodyControlor,
@@ -35,7 +25,7 @@ import {
 } from './body'
 import { options } from './config'
 import { SetScreenShot } from './image'
-import { download, downloadJson, getCurrentTime, uploadJson } from './util'
+import { downloadJson, getCurrentTime, uploadJson } from './util'
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
@@ -43,9 +33,7 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
 
 import { LuminosityShader } from 'three/examples/jsm/shaders/LuminosityShader.js'
 import { SobelOperatorShader } from 'three/examples/jsm/shaders/SobelOperatorShader.js'
-import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils'
 import Swal from 'sweetalert2'
-import { FindObjectItem } from './three-utils'
 
 interface BodyData {
     position: ReturnType<THREE.Vector3['toArray']>

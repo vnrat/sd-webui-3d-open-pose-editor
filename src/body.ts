@@ -8,7 +8,7 @@ const handFBXFileUrl =
     'file=extensions/sd-webui-3d-open-pose-editor/models/hand.fbx'
 const footFBXFileUrl =
     'file=extensions/sd-webui-3d-open-pose-editor/models/foot.fbx'
-import { LoadFBXFile, LoadGLTFile, LoadObjFile } from './loader'
+import { LoadFBXFile } from './loader'
 import { FindObjectItem } from './three-utils'
 
 const coco_body_keypoints_const = [
