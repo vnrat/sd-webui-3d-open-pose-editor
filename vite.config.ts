@@ -16,7 +16,7 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/main.tsx'),
       name: 'openpose',
       fileName: 'openpose',
-      formats: ['es'],
+      formats: ['umd'],
     },
     rollupOptions: {
       external: ['react'],
