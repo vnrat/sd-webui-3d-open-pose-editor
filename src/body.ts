@@ -2,12 +2,10 @@ import * as THREE from 'three'
 import { Object3D } from 'three'
 import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils'
 import type { TupleToUnion } from 'type-fest'
-// import handFBXFileUrl from '../models/hand.fbx?url'
-// import footFBXFileUrl from '../models/foot.fbx?url'
-const handFBXFileUrl =
-    'file=extensions/sd-webui-3d-open-pose-editor/models/hand.fbx'
-const footFBXFileUrl =
-    'file=extensions/sd-webui-3d-open-pose-editor/models/foot.fbx'
+let handFBXFileUrl =
+    '/file=extensions/sd-webui-3d-open-pose-editor/models/hand.fbx'
+let footFBXFileUrl =
+    '/file=extensions/sd-webui-3d-open-pose-editor/models/foot.fbx'
 import { LoadFBXFile } from './loader'
 import { FindObjectItem } from './three-utils'
 
@@ -990,9 +988,8 @@ const PartIndexMappingOfPoseModel = {
     ThighFront_R: 76,
 }
 
-// const PosesLibraryUrl = new URL('./poses/data.bin', import.meta.url).href
-const PosesLibraryUrl =
-    'file=extensions/sd-webui-3d-open-pose-editor/src/poses/data.bin'
+let PosesLibraryUrl =
+    '/file=extensions/sd-webui-3d-open-pose-editor/src/poses/data.bin'
 
 const PosesLibrary: [number, number, number][][] | null = []
 
@@ -1029,4 +1026,14 @@ export async function LoadPosesLibrary() {
 
         PosesLibrary?.push(temp)
     }
+}
+
+export function setFilePath(
+    handFBXFilePath: string,
+    footFBXFilePath: string,
+    posesLibraryPath: string
+) {
+    handFBXFileUrl = `/file=${handFBXFilePath}`
+    footFBXFileUrl = `/file=${footFBXFilePath}`
+    PosesLibraryUrl = `/file=${posesLibraryPath}`
 }

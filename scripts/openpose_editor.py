@@ -1,10 +1,26 @@
+import html
+import json
+import pathlib
+
 import gradio as gr
 from modules import script_callbacks
 from modules.shared import opts
 
 
 def on_ui_tabs():
+    root_path = pathlib.Path(__file__).resolve().parents[1]
+    consts = {
+        "handFbxPath": str(root_path / "models" / "hand.fbx"),
+        "footFbxPath": str(root_path / "models" / "foot.fbx"),
+        "posesPath": str(root_path / "src" / "poses" / "data.bin"),
+    }
     with gr.Blocks(analytics_enabled=False) as blocks:
+        gr.HTML(
+            f"""
+            <div id="threedopenpose_consts">{html.escape(json.dumps(consts))}</div>
+            """,
+            visible=False,
+        )
         with gr.Row():
             with gr.Column(elem_id="threedopenpose_left_column"):
                 with gr.Tab("Edit Openpose"):

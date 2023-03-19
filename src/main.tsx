@@ -1,6 +1,6 @@
 import { options } from './config'
 import { BodyEditor } from './editor'
-import { type BodyControlor } from './body'
+import { setFilePath, type BodyControlor } from './body'
 import { AddScreenShotListener } from './image'
 import { uploadImage } from './util'
 
@@ -9,6 +9,11 @@ let currentControlor: BodyControlor | undefined
 let canvasSize = [512, 512]
 
 const init = () => {
+    const consts = JSON.parse(
+        gradioApp().querySelector('#threedopenpose_consts')!.textContent!
+    )
+    setFilePath(consts.handFbxPath, consts.footFbxPath, consts.posesPath)
+
     options.autoSize = false
     resize()
     editor = new BodyEditor(
