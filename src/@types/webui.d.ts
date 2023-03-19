@@ -21,10 +21,13 @@ interface Window {
         onChangeThigh: (value: number) => void
         onChangeLowerLeg: (value: number) => void
         onChangeFootSize: (value: number) => void
+        detectImage: () => void
         setBackground: () => void
         saveScene: () => void
         loadScene: () => void
         restoreLastSavedScene: () => void
+        undo: () => void
+        redo: () => void
         randomPose: () => void
         copyBodyZ: () => void
         copyBodyX: () => void

@@ -46,6 +46,10 @@ def on_ui_tabs():
                             interactive=True,
                         )
                     with gr.Row():
+                        undo = gr.Button(value="Undo")
+                        redo = gr.Button(value="Redo")
+                    with gr.Row():
+                        detect_image = gr.Button(value="Detect From Image")
                         set_background = gr.Button(value="Add Background image")
                         random_pose = gr.Button(value="Set Random Pose")
                     with gr.Row():
@@ -312,6 +316,9 @@ def on_ui_tabs():
             None, foot_size, None, _js="window.threedopenpose.onChangeFootSize"
         )
 
+        undo.click(None, None, None, _js="window.threedopenpose.undo")
+        redo.click(None, None, None, _js="window.threedopenpose.redo")
+        detect_image.click(None, None, None, _js="window.threedopenpose.detectImage")
         set_background.click(
             None, None, None, _js="window.threedopenpose.setBackground"
         )

@@ -1,11 +1,16 @@
 import { options } from './config'
 import { BodyEditor } from './editor'
-import { setFilePath, type BodyControlor } from './body'
+import { setFilePath } from './body'
 import { AddScreenShotListener } from './image'
-import { uploadImage } from './util'
+import { setBackgroundImage, uploadImage } from './util'
+import { ChangeBodyParam, CreateBodyParamsControls } from './body-params'
+import {
+    updateGradioCheckbox,
+    updateGradioImage,
+    updateGradioSlider,
+} from './webui/gradio'
 
 let editor: BodyEditor | undefined
-let currentControlor: BodyControlor | undefined
 let canvasSize = [512, 512]
 
 const init = () => {
@@ -20,72 +25,7 @@ const init = () => {
         gradioApp().querySelector('#threedopenpose_canvas')!
     )
 
-    const paramElem = gradioApp().querySelector<HTMLElement>(
-        '#threedopenpose_body_params'
-    )!
-    paramElem.classList.add('threedopenpose_hidden')
-
-    editor.RegisterEvent({
-        select(controlor) {
-            currentControlor = controlor
-            updateGradioSlider(
-                paramElem.querySelector('#threedopenpose_head_size')!,
-                controlor.HeadSize
-            )
-            updateGradioSlider(
-                paramElem.querySelector('#threedopenpose_nose_to_neck')!,
-                controlor.NoseToNeck
-            )
-            updateGradioSlider(
-                paramElem.querySelector('#threedopenpose_shoulder_width')!,
-                controlor.ShoulderWidth
-            )
-            updateGradioSlider(
-                paramElem.querySelector('#threedopenpose_shoulder_to_hip')!,
-                controlor.ShoulderToHip
-            )
-            updateGradioSlider(
-                paramElem.querySelector('#threedopenpose_arm_length')!,
-                controlor.ArmLength
-            )
-            updateGradioSlider(
-                paramElem.querySelector('#threedopenpose_forearm')!,
-                controlor.Forearm
-            )
-            updateGradioSlider(
-                paramElem.querySelector('#threedopenpose_upper_arm')!,
-                controlor.UpperArm
-            )
-            updateGradioSlider(
-                paramElem.querySelector('#threedopenpose_hand_size')!,
-                controlor.HandSize
-            )
-            updateGradioSlider(
-                paramElem.querySelector('#threedopenpose_hips')!,
-                controlor.Hips
-            )
-            updateGradioSlider(
-                paramElem.querySelector('#threedopenpose_leg_length')!,
-                controlor.LegLength
-            )
-            updateGradioSlider(
-                paramElem.querySelector('#threedopenpose_thigh')!,
-                controlor.Thigh
-            )
-            updateGradioSlider(
-                paramElem.querySelector('#threedopenpose_lower_leg')!,
-                controlor.LowerLeg
-            )
-            updateGradioSlider(
-                paramElem.querySelector('#threedopenpose_foot_size')!,
-                controlor.FootSize
-            )
-            paramElem.classList.remove('threedopenpose_hidden')
-        },
-        unselect() {
-            paramElem.classList.add('threedopenpose_hidden')
-        },
-    })
+    CreateBodyParamsControls(editor)
 
     AddScreenShotListener((id, url, name) => {
         const imageElem = gradioApp().querySelector(
@@ -95,50 +35,6 @@ const init = () => {
     })
 
     editor.loadBodyData()
-}
-
-const updateGradioSlider = (element: Element, value: number) => {
-    const numberElem =
-        element.querySelector<HTMLInputElement>('input[type=number]')!
-    const rangeElem =
-        element.querySelector<HTMLInputElement>('input[type=range]')!
-    numberElem.value = value.toString()
-    rangeElem.value = value.toString()
-    element.dispatchEvent(new Event('input'))
-    numberElem.dispatchEvent(new Event('input'))
-    rangeElem.dispatchEvent(new Event('input'))
-}
-
-const updateGradioImage = async (
-    element: Element,
-    url: string,
-    name: string
-) => {
-    const blob = await (await fetch(url)).blob()
-    const file = new File([blob], name)
-    const dt = new DataTransfer()
-    dt.items.add(file)
-
-    const input = element.querySelector<HTMLInputElement>("input[type='file']")!
-    element
-        .querySelector<HTMLButtonElement>("button[aria-label='Clear']")
-        ?.click()
-    input.value = ''
-    input.files = dt.files
-    input.dispatchEvent(
-        new Event('change', {
-            bubbles: true,
-            composed: true,
-        })
-    )
-}
-
-const updateGradioCheckbox = (element: Element, value: boolean) => {
-    const checkboxElem = element.querySelector<HTMLInputElement>(
-        'input[type=checkbox]'
-    )!
-    checkboxElem.checked = value
-    checkboxElem.dispatchEvent(new Event('change'))
 }
 
 const isTabActive = () => {
@@ -225,90 +121,53 @@ window.threedopenpose = {
         editor.CameraFocalLength = value
     },
     onChangeHeadSize: (value: number) => {
-        if (!currentControlor) {
-            return
-        }
-        currentControlor.HeadSize = value
+        ChangeBodyParam('HeadSize', value)
     },
     onChangeNoseToNeck: (value: number) => {
-        if (!currentControlor) {
-            return
-        }
-        currentControlor.NoseToNeck = value
+        ChangeBodyParam('NoseToNeck', value)
     },
     onChangeShoulderWidth: (value: number) => {
-        if (!currentControlor) {
-            return
-        }
-        currentControlor.ShoulderWidth = value
+        ChangeBodyParam('ShoulderWidth', value)
     },
     onChangeShoulderToHip: (value: number) => {
-        if (!currentControlor) {
-            return
-        }
-        currentControlor.ShoulderToHip = value
+        ChangeBodyParam('ShoulderToHip', value)
     },
     onChangeArmLength: (value: number) => {
-        if (!currentControlor) {
-            return
-        }
-        currentControlor.ArmLength = value
+        ChangeBodyParam('ArmLength', value)
     },
     onChangeForearm: (value: number) => {
-        if (!currentControlor) {
-            return
-        }
-        currentControlor.Forearm = value
+        ChangeBodyParam('Forearm', value)
     },
     onChangeUpperArm: (value: number) => {
-        if (!currentControlor) {
-            return
-        }
-        currentControlor.UpperArm = value
+        ChangeBodyParam('UpperArm', value)
     },
     onChangeHandSize: (value: number) => {
-        if (!currentControlor) {
-            return
-        }
-        currentControlor.HandSize = value
+        ChangeBodyParam('HandSize', value)
     },
     onChangeHips: (value: number) => {
-        if (!currentControlor) {
-            return
-        }
-        currentControlor.Hips = value
+        ChangeBodyParam('Hips', value)
     },
     onChangeLegLength: (value: number) => {
-        if (!currentControlor) {
-            return
-        }
-        currentControlor.LegLength = value
+        ChangeBodyParam('LegLength', value)
     },
     onChangeThigh: (value: number) => {
-        if (!currentControlor) {
-            return
-        }
-        currentControlor.Thigh = value
+        ChangeBodyParam('Thigh', value)
     },
     onChangeLowerLeg: (value: number) => {
-        if (!currentControlor) {
-            return
-        }
-        currentControlor.LowerLeg = value
+        ChangeBodyParam('LowerLeg', value)
     },
     onChangeFootSize: (value: number) => {
-        if (!currentControlor) {
+        ChangeBodyParam('FootSize', value)
+    },
+    detectImage: () => {
+        if (!editor) {
             return
         }
-        currentControlor.FootSize = value
+        editor.DetectFromImage()
     },
     setBackground: async () => {
         const dataUrl = await uploadImage()
-        const div = gradioApp().querySelector<HTMLElement>(
-            '#threedopenpose_background'
-        )!
-
-        if (div) div.style.backgroundImage = `url(${dataUrl})`
+        setBackgroundImage(dataUrl)
     },
     saveScene: () => {
         if (!editor) {
@@ -327,6 +186,18 @@ window.threedopenpose = {
             return
         }
         editor.RestoreLastSavedScene()
+    },
+    undo: () => {
+        if (!editor) {
+            return
+        }
+        editor.Undo()
+    },
+    redo: () => {
+        if (!editor) {
+            return
+        }
+        editor.Redo()
     },
     randomPose: () => {
         if (!editor) {

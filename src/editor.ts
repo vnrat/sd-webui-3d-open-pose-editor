@@ -25,7 +25,14 @@ import {
 } from './body'
 import { options } from './config'
 import { SetScreenShot } from './image'
-import { downloadJson, getCurrentTime, uploadJson } from './util'
+import {
+    downloadJson,
+    getCurrentTime,
+    getImage,
+    setBackgroundImage,
+    uploadImage,
+    uploadJson,
+} from './util'
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
@@ -34,6 +41,7 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
 import { LuminosityShader } from 'three/examples/jsm/shaders/LuminosityShader.js'
 import { SobelOperatorShader } from 'three/examples/jsm/shaders/SobelOperatorShader.js'
 import Swal from 'sweetalert2'
+import { DetectPosefromImage } from './detect'
 
 interface BodyData {
     position: ReturnType<THREE.Vector3['toArray']>
@@ -68,6 +76,25 @@ function Oops(error: any) {
         text: 'Something went wrong!\n' + error?.stack ?? error,
         footer: '<a href="https://github.com/nonnonstop/sd-webui-3d-open-pose-editor/issues">If the problem persists, please click here to ask a question.</a>',
     })
+}
+
+interface TransformValue {
+    scale: Object3D['scale']
+    rotation: Object3D['rotation']
+    position: Object3D['position']
+}
+
+function GetTransformValue(obj: Object3D): TransformValue {
+    return {
+        scale: obj.scale.clone(),
+        rotation: obj.rotation.clone(),
+        position: obj.position.clone(),
+    }
+}
+
+export interface Command {
+    execute: () => void
+    undo: () => void
 }
 
 export class BodyEditor {
@@ -137,19 +164,9 @@ export class BodyEditor {
         )
 
         this.transformControl.setMode('rotate') //旋转
-        // transformControl.setSize(0.4);
+        // this.transformControl.setSize(0.4);
         this.transformControl.setSpace('local')
-        this.transformControl.addEventListener('change', () => {
-            // this.renderer.render(this.scene, this.camera)
-        })
-
-        this.transformControl.addEventListener('mouseDown', () => {
-            this.orbitControls.enabled = false
-        })
-        this.transformControl.addEventListener('mouseUp', () => {
-            this.orbitControls.enabled = true
-        })
-
+        this.registerTranformControlEvent()
         this.scene.add(this.transformControl)
 
         // Light
@@ -180,6 +197,10 @@ export class BodyEditor {
             this.handleResize.bind(this)
         )
 
+        // When changing the body parameter, the canvas focus is lost, so we have to listen to the documentation for a better experience.
+        // But need to find a better way if run on webui
+        document.addEventListener('keydown', this.handleKeyDown.bind(this))
+
         this.initEdgeComposer()
 
         // // Create a render target with depth texture
@@ -192,7 +213,123 @@ export class BodyEditor {
         this.handleResize()
         this.AutoSaveScene()
     }
+    commandHistory: Command[] = []
+    historyIndex = -1
+    pushCommand(cmd: Command) {
+        console.log('pushCommand')
+        if (this.historyIndex != this.commandHistory.length - 1)
+            this.commandHistory = this.commandHistory.slice(
+                0,
+                this.historyIndex + 1
+            )
+        this.commandHistory.push(cmd)
+        this.historyIndex = this.commandHistory.length - 1
+    }
 
+    CreateTransformCommand(obj: Object3D, _old: TransformValue): Command {
+        const oldValue = _old
+        const newValue = GetTransformValue(obj)
+        return {
+            execute() {
+                obj.position.copy(newValue.position)
+                obj.rotation.copy(newValue.rotation)
+                obj.scale.copy(newValue.scale)
+            },
+            undo() {
+                obj.position.copy(oldValue.position)
+                obj.rotation.copy(oldValue.rotation)
+                obj.scale.copy(oldValue.scale)
+            },
+        }
+    }
+
+    CreateAddBodyCommand(obj: Object3D): Command {
+        return {
+            execute: () => {
+                this.scene.add(obj)
+            },
+            undo: () => {
+                obj.removeFromParent()
+                this.transformControl.detach()
+            },
+        }
+    }
+
+    CreateRemoveBodyCommand(obj: Object3D): Command {
+        return {
+            execute: () => {
+                obj.removeFromParent()
+                this.transformControl.detach()
+            },
+            undo: () => {
+                this.scene.add(obj)
+            },
+        }
+    }
+
+    Undo() {
+        console.log('Undo', this.historyIndex)
+
+        if (this.historyIndex >= 0) {
+            const cmd = this.commandHistory[this.historyIndex]
+            cmd.undo()
+            this.historyIndex--
+        }
+    }
+
+    Redo() {
+        console.log('Redo', this.historyIndex)
+
+        if (this.historyIndex < this.commandHistory.length - 1) {
+            const cmd = this.commandHistory[this.historyIndex + 1]
+            cmd.execute()
+            this.historyIndex++
+        }
+    }
+
+    handleKeyDown(e: KeyboardEvent) {
+        if (e.code === 'KeyZ' && (e.ctrlKey || e.metaKey) && e.shiftKey) {
+            this.Redo()
+        } else if (e.code === 'KeyR' && (e.ctrlKey || e.metaKey)) {
+            this.Redo()
+            // prevent brower refresh
+            e.preventDefault()
+        } else if (e.code === 'KeyZ' && (e.ctrlKey || e.metaKey)) {
+            this.Undo()
+        }
+    }
+
+    registerTranformControlEvent() {
+        let oldTransformValue: TransformValue = {
+            scale: new THREE.Vector3(),
+            rotation: new THREE.Euler(),
+            position: new THREE.Vector3(),
+        }
+        this.transformControl.addEventListener('change', () => {
+            // console.log('change')
+            // this.renderer.render(this.scene, this.camera)
+        })
+
+        this.transformControl.addEventListener('objectChange', () => {
+            // console.log('objectChange')
+            // this.renderer.render(this.scene, this.camera)
+        })
+
+        this.transformControl.addEventListener('mouseDown', () => {
+            const part = this.getSelectedPart()
+            if (part) oldTransformValue = GetTransformValue(part)
+            this.orbitControls.enabled = false
+        })
+        this.transformControl.addEventListener('mouseUp', () => {
+            const part = this.getSelectedPart()
+            if (part) {
+                this.pushCommand(
+                    this.CreateTransformCommand(part, oldTransformValue)
+                )
+            }
+            this.orbitControls.enabled = true
+        })
+    }
     render(width: number = this.Width, height: number = this.Height) {
         // this.ikSolver?.update()
 
@@ -673,6 +810,9 @@ export class BodyEditor {
             .map((o) => Math.ceil(o.position.z / 30))
 
         if (list.length > 0) body.translateZ((Math.min(...list) - 1) * 30)
+
+        this.pushCommand(this.CreateAddBodyCommand(body))
+
         this.scene.add(body)
         this.fixFootVisible()
     }
@@ -687,6 +827,9 @@ export class BodyEditor {
             .map((o) => Math.ceil(o.position.x / 50))
 
         if (list.length > 0) body.translateX((Math.min(...list) - 1) * 50)
+
+        this.pushCommand(this.CreateAddBodyCommand(body))
+
         this.scene.add(body)
         this.fixFootVisible()
     }
@@ -697,10 +840,14 @@ export class BodyEditor {
 
         return obj
     }
+    getSelectedPart() {
+        return this.transformControl.object
+    }
     RemoveBody() {
         const obj = this.getSelectedBody()
 
         if (obj) {
+            this.pushCommand(this.CreateRemoveBodyCommand(obj))
             console.log(obj.name)
             obj.removeFromParent()
             this.transformControl.detach()
@@ -1081,5 +1228,132 @@ export class BodyEditor {
     async LoadScene() {
         const rawData = await uploadJson()
         if (rawData) this.RestoreScene(rawData)
+    }
+
+    // drawPoseData(positions: THREE.Vector3[]) {
+    //     const objects: Record<
+    //         keyof typeof PartIndexMappingOfBlazePoseModel,
+    //         Object3D
+    //     > = Object.fromEntries(
+    //         Object.keys(PartIndexMappingOfBlazePoseModel).map((name) => {
+    //             const p = positions[PartIndexMappingOfBlazePoseModel[name]]
+    //             const material = new THREE.MeshBasicMaterial({
+    //                 color: 0xff0000,
+    //             })
+    //             const mesh = new THREE.Mesh(
+    //                 new THREE.SphereGeometry(1),
+    //                 material
+    //             )
+    //             mesh.position.copy(p)
+    //             this.scene.add(mesh)
+    //             return [name, mesh]
+    //         })
+    //     )
+
+    //     const CreateLink2 = (
+    //         startObject: THREE.Object3D,
+    //         endObject: THREE.Object3D
+    //     ) => {
+    //         const startPosition = startObject.position
+    //         const endPostion = endObject.position
+    //         const distance = startPosition.distanceTo(endPostion)
+
+    //         const material = new THREE.MeshBasicMaterial({
+    //             color: 0x666666,
+    //             opacity: 0.6,
+    //             transparent: true,
+    //         })
+    //         const mesh = new THREE.Mesh(new THREE.SphereGeometry(1), material)
+
+    //         // 将拉伸后的球体放在中点，并计算旋转轴和角度
+    //         const origin = startPosition
+    //             .clone()
+    //             .add(endPostion)
+    //             .multiplyScalar(0.5)
+    //         const v = endPostion.clone().sub(startPosition)
+    //         const unit = new THREE.Vector3(1, 0, 0)
+    //         const axis = unit.clone().cross(v)
+    //         const angle = unit.clone().angleTo(v)
+
+    //         mesh.scale.copy(new THREE.Vector3(distance / 2, 1, 1))
+    //         mesh.position.copy(origin)
+    //         mesh.setRotationFromAxisAngle(axis.normalize(), angle)
+    //         this.scene.add(mesh)
+    //     }
+
+    //     CreateLink2(objects['left_shoulder'], objects['left_elbow'])
+    //     CreateLink2(objects['left_elbow'], objects['left_wrist'])
+    //     CreateLink2(objects['left_hip'], objects['left_knee'])
+    //     CreateLink2(objects['left_knee'], objects['left_ankle'])
+    //     CreateLink2(objects['right_shoulder'], objects['right_elbow'])
+    //     CreateLink2(objects['right_elbow'], objects['right_wrist'])
+    //     CreateLink2(objects['right_hip'], objects['right_knee'])
+    //     CreateLink2(objects['right_knee'], objects['right_ankle'])
+
+    //     CreateLink2(objects['left_shoulder'], objects['right_shoulder'])
+    //     CreateLink2(objects['nose'], objects['right_eye'])
+    //     CreateLink2(objects['nose'], objects['left_eye'])
+    //     CreateLink2(objects['left_eye'], objects['left_ear'])
+
+    //     CreateLink2(objects['right_eye'], objects['right_ear'])
+    // }
+
+    async DetectFromImage() {
+        const bodies = this.scene.children.filter((o) => o.name == 'torso')
+        const body = bodies.length == 1 ? bodies[0] : this.getSelectedBody()
+        if (!body) {
+            await Swal.fire('Please select a skeleton!!')
+            return
+        }
+
+        try {
+            let loading = true
+
+            const dataUrl = await uploadImage()
+
+            if (!dataUrl) return
+
+            const image = await getImage(dataUrl)
+            setBackgroundImage(dataUrl)
+
+            setTimeout(() => {
+                if (loading)
+                    Swal.fire({
+                        didOpen: () => {
+                            Swal.showLoading()
+                        },
+                    })
+            }, 500)
+
+            const result = await DetectPosefromImage(image)
+            loading = false
+            Swal.hideLoading()
+            Swal.close()
+
+            if (result) {
+                const positions: [number, number, number][] =
+                    result.poseWorldLandmarks.map(({ x, y, z }) => [
+                        x * 100,
+                        -y * 100,
+                        -z * 100,
+                    ])
+
+                // this.drawPoseData(
+                //     result.poseWorldLandmarks.map(({ x, y, z }) =>
+                //         new THREE.Vector3().fromArray([x * 100, -y * 100, -z * 100])
+                //     )
+                // )
+
+                new BodyControlor(body!).SetBlazePose(positions)
+                return
+            }
+        } catch (error) {
+            Swal.hideLoading()
+            Swal.close()
+
+            Oops(error)
+            console.error(error)
+            return
+        }
     }
 }

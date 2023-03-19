@@ -15,6 +15,30 @@ export function downloadJson(data: string, fileName: string) {
     URL.revokeObjectURL(href)
 }
 
+export function getImage(url: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+        const image = document.createElement('img')
+
+        image.src = url
+        image.addEventListener('load', () => {
+            resolve(image)
+        })
+        image.addEventListener('abort', () => {
+            reject('onabort')
+        })
+        image.addEventListener('error', () => {
+            reject('onerror')
+        })
+    })
+}
+
+export function setBackgroundImage(dataUrl: string | null) {
+    const div = gradioApp().getElementById('threedopenpose_background')
+    dataUrl = !dataUrl ? 'none' : `url(${dataUrl})`
+
+    if (div) div.style.backgroundImage = dataUrl
+}
+
 export function getCurrentTime(format = 'YYYY_MM_DD_HH_mm_ss') {
     return dayjs(new Date()).format(format)
 }
