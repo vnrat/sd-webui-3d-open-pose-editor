@@ -10,17 +10,6 @@ export const updateGradioSlider = (element: Element, value: number) => {
     rangeElem.dispatchEvent(new Event('input'))
 }
 
-export const addGradioSliderChangeListener = (
-    element: Element,
-    listener: (value: number) => void
-) => {
-    const rangeElem =
-        element.querySelector<HTMLInputElement>('input[type=range]')!
-    rangeElem.addEventListener('input', () => {
-        listener(Number(rangeElem.value))
-    })
-}
-
 export const addGradioSliderReleaseListener = (
     element: Element,
     listener: (value: number) => void

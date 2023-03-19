@@ -1,7 +1,6 @@
 import { BodyEditor } from './editor'
 import { BodyControlor } from './body'
 import {
-    addGradioSliderChangeListener,
     addGradioSliderReleaseListener,
     updateGradioSlider,
 } from './webui/gradio'
@@ -49,27 +48,22 @@ export function CreateBodyParamsControls(editor: BodyEditor) {
     const paramElem = gradioApp().querySelector<HTMLElement>(
         '#threedopenpose_body_params'
     )!
+    paramElem.classList.add('threedopenpose_hidden')
+
+    const oldValues = new Map<BodyParams, number>()
 
     Object.entries(BodyParamsInit).forEach(([_name, selector]) => {
         const name = _name as BodyParams
-        let oldValue = 0
-        let changing = false
         const elem = paramElem.querySelector(selector)!
-        addGradioSliderChangeListener(elem, (value) => {
-            if (currentControlor) {
-                // the first time
-                if (changing == false) oldValue = currentControlor[name]
-                changing = true
-                currentControlor[name] = value
-            }
-        })
         addGradioSliderReleaseListener(elem, (value) => {
-            if (
-                currentControlor &&
-                oldValue != 0 &&
-                Math.round(oldValue * 10) != Math.round(value * 10)
-            ) {
-                changing = false
+            if (!currentControlor) {
+                return
+            }
+            const oldValue = oldValues.get(name)
+            if (!oldValue) {
+                return
+            }
+            if (Math.round(oldValue * 10) != Math.round(value * 10)) {
                 PushExecuteBodyParamsCommand(
                     editor,
                     currentControlor,
@@ -77,12 +71,10 @@ export function CreateBodyParamsControls(editor: BodyEditor) {
                     oldValue,
                     value
                 )
-                oldValue = value
+                oldValues.set(name, value)
             }
         })
     })
-
-    paramElem.classList.add('threedopenpose_hidden')
 
     editor.RegisterEvent({
         select(controlor) {
@@ -90,10 +82,9 @@ export function CreateBodyParamsControls(editor: BodyEditor) {
             console.log('select')
             Object.entries(BodyParamsInit).forEach(([_name, selector]) => {
                 const name = _name as BodyParams
-                updateGradioSlider(
-                    paramElem.querySelector(selector)!,
-                    controlor[name]
-                )
+                const value = controlor[name]
+                updateGradioSlider(paramElem.querySelector(selector)!, value)
+                oldValues.set(name, value)
             })
             paramElem.classList.remove('threedopenpose_hidden')
         },
