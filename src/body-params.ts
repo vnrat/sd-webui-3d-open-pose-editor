@@ -21,11 +21,12 @@ const BodyParamsInit = {
     LowerLeg: '#threedopenpose_lower_leg',
     FootSize: '#threedopenpose_foot_size',
 }
+export type BodyParams = keyof typeof BodyParamsInit
 
 function PushExecuteBodyParamsCommand(
     editor: BodyEditor,
     controlor: BodyControlor,
-    name: keyof typeof BodyParamsInit,
+    name: BodyParams,
     oldValue: number,
     value: number
 ) {
@@ -50,7 +51,7 @@ export function CreateBodyParamsControls(editor: BodyEditor) {
     )!
 
     Object.entries(BodyParamsInit).forEach(([_name, selector]) => {
-        const name = _name as keyof typeof BodyParamsInit
+        const name = _name as BodyParams
         let oldValue = 0
         let changing = false
         const elem = paramElem.querySelector(selector)!
@@ -88,7 +89,7 @@ export function CreateBodyParamsControls(editor: BodyEditor) {
             currentControlor = controlor
             console.log('select')
             Object.entries(BodyParamsInit).forEach(([_name, selector]) => {
-                const name = _name as keyof typeof BodyParamsInit
+                const name = _name as BodyParams
                 updateGradioSlider(
                     paramElem.querySelector(selector)!,
                     controlor[name]
@@ -102,10 +103,7 @@ export function CreateBodyParamsControls(editor: BodyEditor) {
     })
 }
 
-export function ChangeBodyParam(
-    name: keyof typeof BodyParamsInit,
-    value: number
-) {
+export function ChangeBodyParam(name: BodyParams, value: number) {
     if (!currentControlor) {
         return
     }

@@ -264,56 +264,95 @@ def on_ui_tabs():
         height.change(None, [width, height], None, _js="window.threedopenpose.onResize")
 
         camera_near.change(
-            None, camera_near, None, _js="window.threedopenpose.onChangeCameraNear"
+            None, camera_near, None, _js="window.threedopenpose.changeCameraNear"
         )
         camera_far.change(
-            None, camera_far, None, _js="window.threedopenpose.onChangeCameraFar"
+            None, camera_far, None, _js="window.threedopenpose.changeCameraFar"
         )
         camera_focal_length.change(
             None,
             camera_focal_length,
             None,
-            _js="window.threedopenpose.onChangeCameraFocalLength",
+            _js="window.threedopenpose.changeCameraFocalLength",
         )
 
         head_size.change(
-            None, head_size, None, _js="window.threedopenpose.onChangeHeadSize"
+            None,
+            head_size,
+            None,
+            _js="(v) => window.threedopenpose.changeBodyParam('HeadSize', v)",
         )
         nose_to_neck.change(
-            None, nose_to_neck, None, _js="window.threedopenpose.onChangeNoseToNeck"
+            None,
+            nose_to_neck,
+            None,
+            _js="(v) => window.threedopenpose.changeBodyParam('NoseToNeck', v)",
         )
         shoulder_width.change(
             None,
             shoulder_width,
             None,
-            _js="window.threedopenpose.onChangeShoulderWidth",
+            _js="(v) => window.threedopenpose.changeBodyParam('ShoulderWidth', v)",
         )
         shoulder_to_hip.change(
             None,
             shoulder_to_hip,
             None,
-            _js="window.threedopenpose.onChangeShoulderToHip",
+            _js="(v) => window.threedopenpose.changeBodyParam('ShoulderToHip', v)",
         )
         arm_length.change(
-            None, arm_length, None, _js="window.threedopenpose.onChangeArmLength"
+            None,
+            arm_length,
+            None,
+            _js="(v) => window.threedopenpose.changeBodyParam('ArmLength', v)",
         )
-        forearm.change(None, forearm, None, _js="window.threedopenpose.onChangeForearm")
+        forearm.change(
+            None,
+            forearm,
+            None,
+            _js="(v) => window.threedopenpose.changeBodyParam('Forearm', v)",
+        )
         upper_arm.change(
-            None, upper_arm, None, _js="window.threedopenpose.onChangeUpperArm"
+            None,
+            upper_arm,
+            None,
+            _js="(v) => window.threedopenpose.changeBodyParam('UpperArm', v)",
         )
         hand_size.change(
-            None, hand_size, None, _js="window.threedopenpose.onChangeHandSize"
+            None,
+            hand_size,
+            None,
+            _js="(v) => window.threedopenpose.changeBodyParam('HandSize', v)",
         )
-        hips.change(None, hips, None, _js="window.threedopenpose.onChangeHips")
+        hips.change(
+            None,
+            hips,
+            None,
+            _js="(v) => window.threedopenpose.changeBodyParam('Hips', v)",
+        )
         leg_length.change(
-            None, leg_length, None, _js="window.threedopenpose.onChangeLegLength"
+            None,
+            leg_length,
+            None,
+            _js="(v) => window.threedopenpose.changeBodyParam('LegLength', v)",
         )
-        thigh.change(None, thigh, None, _js="window.threedopenpose.onChangeThigh")
+        thigh.change(
+            None,
+            thigh,
+            None,
+            _js="(v) => window.threedopenpose.changeBodyParam('Thigh', v)",
+        )
         lower_leg.change(
-            None, lower_leg, None, _js="window.threedopenpose.onChangeLowerLeg"
+            None,
+            lower_leg,
+            None,
+            _js="(v) => window.threedopenpose.changeBodyParam('LowerLeg', v)",
         )
         foot_size.change(
-            None, foot_size, None, _js="window.threedopenpose.onChangeFootSize"
+            None,
+            foot_size,
+            None,
+            _js="(v) => window.threedopenpose.changeBodyParam('FootSize', v)",
         )
 
         undo.click(None, None, None, _js="window.threedopenpose.undo")
@@ -378,16 +417,28 @@ def on_ui_tabs():
             _js="window.threedopenpose.sendImg2img",
         )
         pose_download.click(
-            None, pose_image, None, _js="window.threedopenpose.downloadPoseImage"
+            None,
+            pose_image,
+            None,
+            _js="(v) => window.threedopenpose.downloadImage(v, 'pose.png')",
         )
         depth_download.click(
-            None, depth_image, None, _js="window.threedopenpose.downloadDepthImage"
+            None,
+            depth_image,
+            None,
+            _js="(v) => window.threedopenpose.downloadImage(v, 'depth.png')",
         )
         normal_download.click(
-            None, normal_image, None, _js="window.threedopenpose.downloadNormalImage"
+            None,
+            normal_image,
+            None,
+            _js="(v) => window.threedopenpose.downloadImage(v, 'normal.png')",
         )
         canny_download.click(
-            None, canny_image, None, _js="window.threedopenpose.downloadCannyImage"
+            None,
+            canny_image,
+            None,
+            _js="(v) => window.threedopenpose.downloadImage(v, 'canny.png')",
         )
 
     return [(blocks, "3D Openpose", "threedopenpose")]
